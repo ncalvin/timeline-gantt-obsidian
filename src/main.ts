@@ -145,8 +145,15 @@ export default class TimelineGanttPlugin extends Plugin {
 		this.projectManager.saveProject(project);
 		new Notice(`Projeto "${title}" criado com sucesso!`);
 
-		// Recarrega a view
-		this.activateView();
+		// Recarrega a view e seleciona o projeto
+		await this.activateView();
+		
+		// Seleciona o projeto recém-criado
+		const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_TIMELINE);
+		if (leaves.length > 0) {
+			const view = leaves[0].view as TimelineView;
+			view.selectProject(projectId);
+		}
 	}
 
 	async importProject() {

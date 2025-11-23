@@ -16,6 +16,7 @@ export class TimelineView extends ItemView {
 	private svg: any;
 	private zoom: any;
 	public t: Translations;
+	private projectSelectElement: HTMLSelectElement | null = null;
 
 	constructor(leaf: WorkspaceLeaf, projectManager: ProjectManager, translations: Translations) {
 		super(leaf);
@@ -49,6 +50,22 @@ export class TimelineView extends ItemView {
 	}
 
 	/**
+	 * Seleciona um projeto e atualiza a visualização
+	 */
+	public selectProject(projectId: string): void {
+		this.currentProject = this.projectManager.getProject(projectId) || null;
+		
+		// Update the dropdown if it exists
+		if (this.projectSelectElement) {
+			this.projectSelectElement.value = projectId;
+		}
+		
+		// Refresh the view
+		const container = this.containerEl.children[1];
+		this.renderTimeline(container);
+	}
+
+	/**
 	 * Renderiza a barra de ferramentas
 	 */
 	private renderToolbar(container: Element): void {
@@ -56,6 +73,7 @@ export class TimelineView extends ItemView {
 
 		// Seletor de projeto
 		const projectSelect = toolbar.createEl('select', { cls: 'timeline-project-select' });
+		this.projectSelectElement = projectSelect;
 		projectSelect.createEl('option', { text: this.t.ui_project_select, value: '' });
 
 		const projects = this.projectManager.getProjects();
@@ -65,6 +83,11 @@ export class TimelineView extends ItemView {
 				value: project.projectId
 			});
 		});
+
+		// Set current project if available
+		if (this.currentProject) {
+			projectSelect.value = this.currentProject.projectId;
+		}
 
 		projectSelect.addEventListener('change', (e) => {
 			const projectId = (e.target as HTMLSelectElement).value;
