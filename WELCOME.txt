@@ -1,0 +1,248 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                         🎯 TIMELINE GANTT PLUGIN                             ║
+║                          Para Obsidian v0.15.0+                              ║
+║                                                                              ║
+║                    Plugin de Gerenciamento de Projetos                       ║
+║              com Linha do Tempo Dinâmica e Sincronização                     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📦 INSTALAÇÃO RÁPIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Navegue até a pasta do plugin:
+     $ cd .obsidian/plugins/timeline-gantt
+
+  2. Execute o script de instalação:
+     $ ./install.sh
+
+  OU instale manualmente:
+     $ npm install
+     $ npm run build
+
+  3. Ative o plugin no Obsidian:
+     Configurações → Community Plugins → Timeline Gantt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ FUNCIONALIDADES PRINCIPAIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✓ Visualização Gantt Interativa
+    └─ Timeline visual com D3.js
+    └─ Zoom escalável (dias → anos)
+    └─ Scroll fluido
+
+  ✓ Sincronização Bidirecional
+    └─ Nota → Timeline
+    └─ Timeline → Nota
+    └─ Automática e instantânea
+
+  ✓ Drag & Drop
+    └─ Arraste tarefas para mudar datas
+    └─ Redimensione para ajustar duração
+    └─ Feedback visual em tempo real
+
+  ✓ Dependências
+    └─ FS, SS, FF, SF
+    └─ Detecção de ciclos
+    └─ Setas visuais conectando tarefas
+
+  ✓ Filtros Avançados
+    └─ Status, etiquetas, responsável
+    └─ Busca por texto
+    └─ Range de datas
+
+  ✓ Export/Import
+    └─ JSON estruturado
+    └─ CSV para planilhas
+    └─ PNG/SVG para imagens (futuro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 ESTRUTURA DE ARQUIVOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  timeline-gantt/
+  │
+  ├─ 📖 Documentação
+  │  ├─ INDEX.md ................... Índice principal de documentação
+  │  ├─ README.md .................. Documentação completa do usuário
+  │  ├─ QUICKSTART.md .............. Tutorial rápido de 5 minutos
+  │  ├─ INSTALLATION.md ............ Guia de instalação detalhado
+  │  ├─ ARCHITECTURE.md ............ Arquitetura técnica do sistema
+  │  ├─ PROJECT_SUMMARY.md ......... Resumo do projeto
+  │  └─ CHANGELOG.md ............... Histórico de versões
+  │
+  ├─ ⚙️ Configuração
+  │  ├─ package.json ............... Dependências NPM
+  │  ├─ tsconfig.json .............. Config TypeScript
+  │  ├─ esbuild.config.mjs ......... Config do bundler
+  │  ├─ manifest.json .............. Manifesto do plugin
+  │  └─ versions.json .............. Compatibilidade
+  │
+  ├─ 💻 Código Fonte (src/)
+  │  ├─ main.ts .................... Orquestrador principal
+  │  ├─ models/
+  │  │  ├─ types.ts ................ Definições TypeScript
+  │  │  └─ ProjectManager.ts ....... Gerenciador de dados
+  │  ├─ sync/
+  │  │  └─ SyncEngine.ts ........... Motor de sincronização
+  │  ├─ views/
+  │  │  └─ TimelineView.ts ......... UI Gantt (D3.js)
+  │  └─ settings/
+  │     └─ SettingsTab.ts .......... Interface de config
+  │
+  ├─ 🎨 Estilos
+  │  └─ styles.css ................. CSS do plugin
+  │
+  └─ 🔧 Scripts
+     ├─ install.sh ................. Instalação automatizada
+     └─ LICENSE .................... Licença MIT
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 USO RÁPIDO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. CRIAR PROJETO
+     Ctrl/Cmd + P → "Timeline Gantt: Create New Project"
+
+  2. ADICIONAR TAREFA
+     
+     Via Nota (Projects/MinhaTask.md):
+     ┌─────────────────────────────────────────────────────────┐
+     │ ---                                                     │
+     │ timelineId: task-1                                      │
+     │ timelineType: task                                      │
+     │ timelineStart: 2025-11-25                               │
+     │ timelineEnd: 2025-12-05                                 │
+     │ timelineStatus: in-progress                             │
+     │ timelineAssignee: Seu Nome                              │
+     │ timelineLabels: [importante, urgente]                   │
+     │ ---                                                     │
+     │                                                         │
+     │ # Minha Tarefa                                          │
+     │                                                         │
+     │ Descrição da tarefa...                                  │
+     └─────────────────────────────────────────────────────────┘
+
+  3. VER TIMELINE
+     Clique no ícone 📅 na sidebar OU
+     Ctrl/Cmd + P → "Open Timeline View"
+
+  4. INTERAGIR
+     • Clique em tarefa → Abre nota vinculada
+     • Arraste tarefa → Altera datas
+     • Busque → Filtra visualização
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 VISUALIZAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Timeline Gantt:
+  
+  ┌────────────────────────────────────────────────────────────────┐
+  │  [Projeto ▼] [Dias][Semanas][Meses]  [+ Tarefa][+ Marco] 🔎  │
+  ├────────────────────────────────────────────────────────────────┤
+  │           Nov 25    Dec 1     Dec 8     Dec 15    Dec 22      │
+  │           ├─────────┼─────────┼─────────┼─────────┼────────   │
+  │                                                                │
+  │  Task 1   █████████████████                                   │
+  │  Task 2             ███████████████                           │
+  │  Task 3                       ████████████                    │
+  │  Marco 1                                ◆                     │
+  │                                                                │
+  └────────────────────────────────────────────────────────────────┘
+  
+  Legenda:
+  ██ = Tarefa em progresso (azul)
+  ██ = Tarefa concluída (verde)
+  ██ = Tarefa pendente (cinza)
+  ◆  = Marco importante
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 PRÓXIMOS PASSOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ☐ 1. Instalar dependências (npm install)
+  ☐ 2. Compilar plugin (npm run build)
+  ☐ 3. Ativar no Obsidian
+  ☐ 4. Ler QUICKSTART.md
+  ☐ 5. Criar primeiro projeto
+  ☐ 6. Explorar exemplos em Projects/
+  ☐ 7. Personalizar configurações
+  ☐ 8. Dominar recursos avançados
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  🆕 Novo usuário?      → INSTALLATION.md + QUICKSTART.md
+  📖 Referência?        → README.md
+  🔧 Desenvolvedor?     → ARCHITECTURE.md + PROJECT_SUMMARY.md
+  🐛 Problemas?         → README.md (Seção "Troubleshooting")
+  📑 Visão geral?       → INDEX.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 COMANDOS DISPONÍVEIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Plugin (Ctrl/Cmd + P):
+  • Timeline Gantt: Open Timeline View
+  • Timeline Gantt: Create New Project
+  • Timeline Gantt: Import Project from JSON
+
+  NPM (Terminal):
+  • npm install         → Instalar dependências
+  • npm run dev         → Modo desenvolvimento
+  • npm run build       → Build de produção
+  • ./install.sh        → Instalação automatizada
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 TECNOLOGIAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  • TypeScript ............ Type safety e desenvolvimento moderno
+  • D3.js ................. Visualização interativa de dados
+  • Obsidian API .......... Integração nativa com o vault
+  • ESBuild ............... Bundling rápido e eficiente
+  • CSS3 .................. Estilização moderna e responsiva
+  • Moment.js ............. Manipulação de datas
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 STATUS DO PROJETO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Versão:                1.0.0
+  Status:                ✅ Pronto para uso
+  Obsidian Mínimo:       v0.15.0
+  Node.js Mínimo:        v16.0.0
+  Última Atualização:    23/11/2025
+  Licença:               MIT
+  Desenvolvedor:         Calvin
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 PRONTO PARA COMEÇAR!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Execute agora:
+  
+  $ cd .obsidian/plugins/timeline-gantt
+  $ ./install.sh
+  
+  E comece a gerenciar seus projetos com uma timeline visual!
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                  Desenvolvido com ❤️  por Calvin                             ║
+║                      github.com/seu-usuario/timeline-gantt                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝

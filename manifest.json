@@ -1,0 +1,10 @@
+{
+  "id": "timeline-gantt",
+  "name": "Timeline Gantt",
+  "version": "1.1.0",
+  "minAppVersion": "0.15.0",
+  "description": "Plugin de planejamento de projetos com linha do tempo dinâmica (Gantt) e sincronização bidirecional com notas. Suporta Português, Inglês, Espanhol e Alemão.",
+  "author": "Calvin",
+  "authorUrl": "https://github.com/calvin",
+  "isDesktopOnly": false
+}

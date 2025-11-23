@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+*.log
+.obsidian/workspace
+.obsidian/workspace.json
+.trash/
+dist/
+build/
+*.map
+.vscode/
+.idea/
