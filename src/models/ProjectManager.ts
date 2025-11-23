@@ -146,4 +146,34 @@ export class ProjectManager {
 
 		return detectCycle(taskId);
 	}
+
+	/**
+	 * Serializa todos os projetos para JSON
+	 */
+	serializeProjects(): string {
+		const projectsArray = Array.from(this.projects.values());
+		return JSON.stringify(projectsArray, null, 2);
+	}
+
+	/**
+	 * Carrega projetos de JSON serializado
+	 */
+	loadProjects(json: string): void {
+		try {
+			const projectsArray = JSON.parse(json) as Project[];
+			this.projects.clear();
+			projectsArray.forEach(project => {
+				this.projects.set(project.projectId, project);
+			});
+		} catch (error) {
+			console.error('Error loading projects:', error);
+		}
+	}
+
+	/**
+	 * Limpa todos os projetos
+	 */
+	clearProjects(): void {
+		this.projects.clear();
+	}
 }

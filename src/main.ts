@@ -39,7 +39,7 @@ export default class TimelineGanttPlugin extends Plugin {
 		// Registra a view
 		this.registerView(
 			VIEW_TYPE_TIMELINE,
-			(leaf) => new TimelineView(leaf, this.projectManager, this.t)
+			(leaf) => new TimelineView(leaf, this.projectManager, this.t, () => this.saveProjects())
 		);
 
 		// Adiciona ribbon icon
@@ -96,11 +96,27 @@ export default class TimelineGanttPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 		this.updateTranslations();
+		
+		// Carrega os projetos salvos
+		await this.loadProjects();
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
 		this.updateTranslations();
+	}
+	
+	async loadProjects() {
+		const data = await this.loadData();
+		if (data?.projects) {
+			this.projectManager.loadProjects(data.projects);
+		}
+	}
+	
+	async saveProjects() {
+		const data = await this.loadData() || {};
+		data.projects = this.projectManager.serializeProjects();
+		await this.saveData(data);
 	}
 	
 	updateTranslations() {
@@ -143,6 +159,7 @@ export default class TimelineGanttPlugin extends Plugin {
 		};
 
 		this.projectManager.saveProject(project);
+		await this.saveProjects(); // Salva no disco
 		new Notice(`Projeto "${title}" criado com sucesso!`);
 
 		// Recarrega a view e seleciona o projeto
@@ -166,11 +183,12 @@ export default class TimelineGanttPlugin extends Plugin {
 			if (!file) return;
 
 			const reader = new FileReader();
-			reader.onload = (event: any) => {
+			reader.onload = async (event: any) => {
 				const json = event.target.result;
 				const success = this.projectManager.importProject(json);
 
 				if (success) {
+					await this.saveProjects(); // Salva no disco
 					new Notice('Projeto importado com sucesso!');
 					this.activateView();
 				} else {

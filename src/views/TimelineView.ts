@@ -17,11 +17,18 @@ export class TimelineView extends ItemView {
 	private zoom: any;
 	public t: Translations;
 	private projectSelectElement: HTMLSelectElement | null = null;
+	private onProjectsChanged: (() => Promise<void>) | null = null;
 
-	constructor(leaf: WorkspaceLeaf, projectManager: ProjectManager, translations: Translations) {
+	constructor(
+		leaf: WorkspaceLeaf, 
+		projectManager: ProjectManager, 
+		translations: Translations,
+		onProjectsChanged?: () => Promise<void>
+	) {
 		super(leaf);
 		this.projectManager = projectManager;
 		this.t = translations;
+		this.onProjectsChanged = onProjectsChanged || null;
 	}
 
 	getViewType(): string {

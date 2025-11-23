@@ -4514,13 +4514,15 @@ function transform(node) {
 // src/views/TimelineView.ts
 var VIEW_TYPE_TIMELINE = "timeline-gantt-view";
 var TimelineView = class extends import_obsidian.ItemView {
-  constructor(leaf, projectManager, translations2) {
+  constructor(leaf, projectManager, translations2, onProjectsChanged) {
     super(leaf);
     this.currentProject = null;
     this.filters = {};
     this.projectSelectElement = null;
+    this.onProjectsChanged = null;
     this.projectManager = projectManager;
     this.t = translations2;
+    this.onProjectsChanged = onProjectsChanged || null;
   }
   getViewType() {
     return VIEW_TYPE_TIMELINE;
@@ -4900,6 +4902,33 @@ var ProjectManager = class {
       return false;
     };
     return detectCycle(taskId);
+  }
+  /**
+   * Serializa todos os projetos para JSON
+   */
+  serializeProjects() {
+    const projectsArray = Array.from(this.projects.values());
+    return JSON.stringify(projectsArray, null, 2);
+  }
+  /**
+   * Carrega projetos de JSON serializado
+   */
+  loadProjects(json) {
+    try {
+      const projectsArray = JSON.parse(json);
+      this.projects.clear();
+      projectsArray.forEach((project) => {
+        this.projects.set(project.projectId, project);
+      });
+    } catch (error) {
+      console.error("Error loading projects:", error);
+    }
+  }
+  /**
+   * Limpa todos os projetos
+   */
+  clearProjects() {
+    this.projects.clear();
   }
 };
 
@@ -5625,7 +5654,7 @@ var TimelineGanttPlugin = class extends import_obsidian4.Plugin {
     this.syncEngine = new SyncEngine(this.app, this.projectManager);
     this.registerView(
       VIEW_TYPE_TIMELINE,
-      (leaf) => new TimelineView(leaf, this.projectManager, this.t)
+      (leaf) => new TimelineView(leaf, this.projectManager, this.t, () => this.saveProjects())
     );
     this.addRibbonIcon("calendar-range", this.t.plugin_name, () => {
       this.activateView();
@@ -5669,10 +5698,22 @@ var TimelineGanttPlugin = class extends import_obsidian4.Plugin {
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
     this.updateTranslations();
+    await this.loadProjects();
   }
   async saveSettings() {
     await this.saveData(this.settings);
     this.updateTranslations();
+  }
+  async loadProjects() {
+    const data = await this.loadData();
+    if (data == null ? void 0 : data.projects) {
+      this.projectManager.loadProjects(data.projects);
+    }
+  }
+  async saveProjects() {
+    const data = await this.loadData() || {};
+    data.projects = this.projectManager.serializeProjects();
+    await this.saveData(data);
   }
   updateTranslations() {
     this.t = getTranslations(this.settings.language);
@@ -5707,6 +5748,7 @@ var TimelineGanttPlugin = class extends import_obsidian4.Plugin {
       updatedAt: new Date().toISOString()
     };
     this.projectManager.saveProject(project);
+    await this.saveProjects();
     new import_obsidian4.Notice(`Projeto "${title}" criado com sucesso!`);
     await this.activateView();
     const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_TIMELINE);
@@ -5724,10 +5766,11 @@ var TimelineGanttPlugin = class extends import_obsidian4.Plugin {
       if (!file)
         return;
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         const json = event.target.result;
         const success = this.projectManager.importProject(json);
         if (success) {
+          await this.saveProjects();
           new import_obsidian4.Notice("Projeto importado com sucesso!");
           this.activateView();
         } else {
