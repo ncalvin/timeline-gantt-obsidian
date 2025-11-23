@@ -1,5 +1,5 @@
 import { App, TFile, CachedMetadata } from 'obsidian';
-import { Task, Milestone, TimelineItem, NoteMeta, HistoryEntry } from '../models/types';
+import { Task, Milestone, TimelineItem, NoteMeta, HistoryEntry, TaskStatus } from '../models/types';
 import { ProjectManager } from '../models/ProjectManager';
 
 /**
@@ -65,9 +65,7 @@ export class SyncEngine {
 		const item = this.projectManager.getItem(projectId, meta.timelineId);
 		if (!item) return false;
 
-		const updates: Partial<Task | Milestone> = {
-			notePath: file.path,
-		};
+		let updates: Partial<Task | Milestone> = {};
 
 		// Adiciona entrada ao histórico
 		const historyEntry: HistoryEntry = {
@@ -77,26 +75,38 @@ export class SyncEngine {
 		};
 
 		if (item.type === 'task' && meta.timelineType === 'task') {
-			if (meta.timelineStart) updates.start = meta.timelineStart;
-			if (meta.timelineEnd) updates.end = meta.timelineEnd;
-			if (meta.timelineStatus) updates.status = meta.timelineStatus as any;
-			if (meta.timelineAssignee) updates.assignee = meta.timelineAssignee;
-			if (meta.timelineLabels) updates.labels = meta.timelineLabels;
-			if (meta.timelineDependencies) updates.dependencies = meta.timelineDependencies;
-			if (meta.timelinePriority) updates.priority = meta.timelinePriority;
-			if (meta.timelineProgress !== undefined) updates.progress = meta.timelineProgress;
+			// Build taskUpdates from scratch
+			const taskUpdates: Partial<Task> = {
+				notePath: file.path,
+			};
+			if (meta.timelineStart) taskUpdates.start = meta.timelineStart;
+			if (meta.timelineEnd) taskUpdates.end = meta.timelineEnd;
+			if (meta.timelineStatus) taskUpdates.status = meta.timelineStatus as TaskStatus;
+			if (meta.timelineAssignee) taskUpdates.assignee = meta.timelineAssignee;
+			if (meta.timelineLabels) taskUpdates.labels = meta.timelineLabels;
+			if (meta.timelineDependencies) taskUpdates.dependencies = meta.timelineDependencies;
+			if (meta.timelinePriority) taskUpdates.priority = meta.timelinePriority;
+			if (meta.timelineProgress !== undefined) taskUpdates.progress = meta.timelineProgress;
 
 			// Calcula duração se start e end mudaram
-			if (updates.start && updates.end) {
-				const start = new Date(updates.start);
-				const end = new Date(updates.end);
+			if (taskUpdates.start && taskUpdates.end) {
+				const start = new Date(taskUpdates.start);
+				const end = new Date(taskUpdates.end);
 				const diffTime = Math.abs(end.getTime() - start.getTime());
-				updates.durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				taskUpdates.durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 			}
+			updates = taskUpdates;
 		} else if (item.type === 'milestone' && meta.timelineType === 'milestone') {
-			if (meta.timelineDate) updates.date = meta.timelineDate;
-			if (meta.timelineStatus) updates.status = meta.timelineStatus as any;
-			if (meta.timelineLabels) updates.labels = meta.timelineLabels;
+			// Build milestoneUpdates from scratch
+			const milestoneUpdates: Partial<Milestone> = {
+				notePath: file.path,
+			};
+			if (meta.timelineDate) milestoneUpdates.date = meta.timelineDate;
+			if (meta.timelineStatus && (meta.timelineStatus === 'pending' || meta.timelineStatus === 'completed')) {
+				milestoneUpdates.status = meta.timelineStatus;
+			}
+			if (meta.timelineLabels) milestoneUpdates.labels = meta.timelineLabels;
+			updates = milestoneUpdates;
 		}
 
 		updates.history = [...item.history, historyEntry];

@@ -251,11 +251,11 @@ export class TimelineView extends ItemView {
 					.on('start', function() {
 						d3.select(this).raise().classed('dragging', true);
 					})
-					.on('drag', function(event) {
+					.on('drag', function(event: any) {
 						const newX = Math.max(0, Math.min(width, event.x));
 						d3.select(this).attr('x', newX);
 					})
-					.on('end', (event) => {
+					.on('end', (event: any) => {
 						const newDate = xScale.invert(event.x);
 						this.onTaskMoved(task, newDate);
 					});
